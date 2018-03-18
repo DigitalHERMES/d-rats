@@ -1,6 +1,5 @@
 [Desktop Entry]
 Version=1.0
-Encoding=UTF-8
 Type=Application
 Exec=d-rats
 Icon=d-rats2
@@ -11,3 +10,4 @@ MimeType=inode/directory
 Name=D-RATS
 Comment=D-STAR Communication Tool
 GenericName=D-STAR Communication Tool
+Keywords=D-Star

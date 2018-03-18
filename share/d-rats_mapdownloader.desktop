@@ -1,6 +1,5 @@
 [Desktop Entry]
 Version=1.0
-Encoding=UTF-8
 Type=Application
 Exec=d-rats_mapdownloader
 Icon=d-rats2
@@ -11,3 +10,4 @@ MimeType=inode/directory
 Name=D-RATS Map Downloader
 Comment=D-RATS Map Downloader
 GenericName=D-RATS Map Downloader
+Keywords=D-Star
