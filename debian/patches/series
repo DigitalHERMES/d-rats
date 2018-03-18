@@ -1,0 +1,5 @@
+01-remove-lzhuf-from-setup.patch
+02-remove-lzhuf-functionality.patch
+03-remove-COPYING-installation.patch
+04-add-check-for-module-dirs.patch
+05-desktops.patch

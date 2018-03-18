@@ -1,0 +1,36 @@
+d-rats (0.3.3-4) unstable; urgency=medium
+
+  * Add debian/watch file thanks to irl (Closes: #781605)
+  * Bump standards version to 3.9.6
+  * dm-upload-allowed removed as obsolete
+  * build depend on dh-python instead of obsolete python-support
+  * Fix various minor lintian warnings for desktop files
+  * update debian/copyright to dep-5
+
+ -- Colin Tuckley <colint@debian.org>  Tue, 05 May 2015 11:14:00 +0100
+
+d-rats (0.3.3-3) unstable; urgency=low
+
+  * Added check for installation in shared python module dirs
+  * Changed arch to all, as this is a pure python app
+
+ -- Steve Conklin <steve@conklinhouse.com>  Wed, 28 Sep 2011 13:50:41 -0500
+
+d-rats (0.3.3-2) unstable; urgency=low
+
+  * Added missing dependency on python-serial
+  * Fixed install location to be debian compliant
+
+ -- Steve Conklin <steve@conklinhouse.com>  Tue, 27 Sep 2011 11:46:11 -0500
+
+d-rats (0.3.3-1) unstable; urgency=low
+
+  * New upstream version 0.3.3
+
+ -- Steve Conklin <steve@conklinhouse.com>  Sat, 09 Jul 2011 20:22:16 -0500
+
+d-rats (0.3.3~b5-8) unstable; urgency=low
+
+  * Ready for initial debian upload (Closes: 589107)
+
+ -- Steve Conklin <steve@conklinhouse.com>  Fri, 18 Feb 2011 18:17:24 -0600

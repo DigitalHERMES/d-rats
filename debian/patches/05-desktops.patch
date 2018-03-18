@@ -1,0 +1,43 @@
+Fix minor desktop lintian warnings
+--- a/share/d-rats_repeater.desktop
++++ b/share/d-rats_repeater.desktop
+@@ -1,6 +1,5 @@
+ [Desktop Entry]
+ Version=1.0
+-Encoding=UTF-8
+ Type=Application
+ Exec=d-rats_repeater
+ Icon=d-rats2
+@@ -11,3 +10,4 @@
+ Name=D-RATS Repeater
+ Comment=D-RATS Repeater
+ GenericName=D-RATS Repeater
++Keywords=D-Star
+--- a/share/d-rats_mapdownloader.desktop
++++ b/share/d-rats_mapdownloader.desktop
+@@ -1,6 +1,5 @@
+ [Desktop Entry]
+ Version=1.0
+-Encoding=UTF-8
+ Type=Application
+ Exec=d-rats_mapdownloader
+ Icon=d-rats2
+@@ -11,3 +10,4 @@
+ Name=D-RATS Map Downloader
+ Comment=D-RATS Map Downloader
+ GenericName=D-RATS Map Downloader
++Keywords=D-Star
+--- a/share/d-rats.desktop
++++ b/share/d-rats.desktop
+@@ -1,6 +1,5 @@
+ [Desktop Entry]
+ Version=1.0
+-Encoding=UTF-8
+ Type=Application
+ Exec=d-rats
+ Icon=d-rats2
+@@ -11,3 +10,4 @@
+ Name=D-RATS
+ Comment=D-STAR Communication Tool
+ GenericName=D-STAR Communication Tool
++Keywords=D-Star

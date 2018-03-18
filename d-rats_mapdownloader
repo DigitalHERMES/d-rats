@@ -1,0 +1,308 @@
+#!/usr/bin/python
+
+import gtk
+import gobject
+import threading
+import time
+
+from d_rats.geopy import distance
+
+try:
+    import mapdisplay
+    import miscwidgets
+except ImportError:
+    from d_rats import mapdisplay
+    from d_rats import miscwidgets
+
+ZOOM_MIN = 10
+ZOOM_MAX = 17
+
+ZOOMS = {}
+for x in range(ZOOM_MIN, ZOOM_MAX+1):
+    t = mapdisplay.MapTile(1, 1, x)
+    x1, y1, x2, __ = t.tile_edges()
+    dist = distance.distance((x1, y1), (x2, y1)).miles * 5
+    ZOOMS["%.1f (" %dist + _("max zoom") + " %i)" % x] = x
+
+class MapDownloader(gtk.Window):
+    def make_info(self):
+        text = """
+This is the D-RATS map download utility.  It will attempt to fetch all of the required tiles for a given center location and desired diameter. The diameter is determined by the zoom level limit.  All zoom levels below the one selected are fetched.  D-RATS defaults to zoom level 14, so it is recommended that you choose at least that level to fetch.  This operation fetches a lot of small files and can take quite a long time."""
+
+        l = gtk.Label(text)
+        l.set_line_wrap(True)
+        l.show()
+
+        return l
+
+    def make_val(self, key, label):
+        box = gtk.HBox(True, 2)
+
+        l = gtk.Label(label)
+        l.show()
+
+        e = miscwidgets.LatLonEntry()
+        e.show()
+
+        box.pack_start(l)
+        box.pack_start(e)
+
+        box.show()
+
+        self.vals[key] = e
+
+        return box
+
+    def make_zoom(self, key, label):
+        min = 10
+        max = ZOOM_MAX
+        default = 14
+
+        box = gtk.HBox(True, 2)
+
+        l = gtk.Label(label)
+        l.show()
+
+        def byval(x, y):
+            try:
+                return int(float(x.split(" ")[0]) - float(y.split(" ")[0]))
+            except Exception, e:
+                return 0
+
+        choices = sorted(ZOOMS.keys(), cmp=byval)
+        c = miscwidgets.make_choice(choices, False, choices[2])
+        c.show()
+
+        box.pack_start(l)
+        box.pack_start(c)
+
+        box.show()
+
+        self.vals[key] = c
+
+        return box
+
+    def build_bounds(self):
+        frame = gtk.Frame("Bounds")
+
+        box = gtk.VBox(True, 2)
+
+        self.val_keys = { "lat" : _("Latitude"),
+                          "lon" : _("Longitude"),
+                          "zoom" : _("Diameter"),
+                          }
+
+        for i in ["lat", "lon"]:
+            box.pack_start(self.make_val(i, self.val_keys[i]), 0,0,0)
+        box.pack_start(self.make_zoom("zoom", _("Diameter") + " (miles)"), 0,0,0)
+
+        box.show()
+
+        frame.add(box)
+        frame.show()
+
+        return frame
+
+    def _update(self, prog, status):
+        if prog:
+            self.progbar.set_fraction(prog)
+        self.status.set_text(status)
+
+        if not self.enabled:
+            self.thread.join()
+            self.stop_button.set_sensitive(False)
+            self.start_button.set_sensitive(True)
+
+    def update(self, prog, status):
+        gobject.idle_add(self._update, prog, status)
+
+    def download_zoom(self, tick, zoom, x, y):
+        if zoom == ZOOM_MAX + 1:
+            return
+
+        nw = (2 * x, 2 * y)
+        sw = (2 * x, (2 * y) + 1)
+        ne = ((2 * x) + 1, 2 * y)
+        se = ((2 * x) + 1, (2 * y) + 1)
+
+        for i in (nw, sw, ne, se):
+            if self.enabled:
+                self.download_zoom(tick, zoom + 1, *i)
+
+        print "Downloading %i:%i,%i" % (zoom, x, y)
+        t = mapdisplay.MapTile(0, 0, zoom)
+        t.x = x
+        t.y = y
+        t.fetch()
+        tick()
+
+    def download_thread(self, **vals):
+        self.complete = False
+        self.enabled = True
+
+        zoom = vals["zoom"]
+        lat = vals["lat"]
+        lon = vals["lon"]
+
+        center = mapdisplay.MapTile(lat, lon, zoom)
+
+        self.count = 0
+        
+        # The number of tiles $levels below zoom is 4^($levels)
+        # Each zoom level has a tile as well, so there are
+        # 4^$level under each zoom level, not counting the last
+
+        depth = pow(4, ZOOM_MAX - zoom)
+        extra = 0
+        for i in range(0, ZOOM_MAX - zoom):
+            extra += pow(4, i)
+        self.max = (depth + extra) * 25
+
+        def status_tick():
+            self.count += 1
+            percent = (float(self.count) / self.max)
+            self.update(percent, _("Downloading") + " (%.0f %%)" % (percent * 100.0))
+
+        for i in range(-2, 3):
+            if not self.enabled:
+                break
+
+            for j in range(-2, 3):
+                if not self.enabled:
+                    break
+
+                tile = center + (i, j)
+                self.download_zoom(status_tick, zoom, tile.x, tile.y)
+
+        if self.enabled:
+            self.update(1.0, _("Complete"))
+        else:
+            self.update(None, _("Stopped"))
+
+        self.complete = True
+        self.enabled = False
+
+    def show_field_error(self, field):
+        d = gtk.MessageDialog(buttons=gtk.BUTTONS_OK, parent=self)
+        d.set_property("text", _("Invalid value for") + " `%s'" % field)
+
+        d.run()
+        d.destroy()
+
+    def show_range_error(self, field):
+        d = gtk.MessageDialog(buttons=gtk.BUTTONS_OK, parent=self)
+        d.set_property("text", _("Invalid range for") + " %s" % field)
+        d.run()
+        d.destroy()
+
+    def do_start(self, widget, data=None):
+        vals = {}
+
+        for k,e in self.vals.items():
+            try:
+                if "zoom" in k:
+                    dia = e.get_active_text()
+                    vals[k] = ZOOMS[dia]
+                else:
+                    vals[k] = e.value()
+            except ValueError, e:
+                self.show_field_error(self.val_keys[k])
+                return
+
+        print "Zoom is %i" % vals["zoom"]
+
+        self.start_button.set_sensitive(False)
+        self.stop_button.set_sensitive(True)
+
+        print "Starting"
+        self.thread = threading.Thread(target=self.download_thread, kwargs=vals)
+        self.thread.setDaemon(True)
+        self.thread.start()        
+        print "Started"
+
+    def do_stop(self, widget, data=None):
+        self.start_button.set_sensitive(True)
+        self.stop_button.set_sensitive(False)
+
+        self.enabled = False
+        self.thread.join()
+
+    def make_control_buttons(self):
+        box = gtk.HBox(True, 2)
+
+        self.start_button = gtk.Button(_("Start"))
+        self.start_button.set_size_request(75, 30)
+        self.start_button.connect("clicked", self.do_start)
+        self.start_button.show()
+
+        self.stop_button = gtk.Button(_("Stop"))
+        self.stop_button.set_size_request(75, 30)
+        self.stop_button.set_sensitive(False)
+        self.stop_button.connect("clicked", self.do_stop)
+        self.stop_button.show()
+
+        box.pack_start(self.start_button, 0,0,0)
+        box.pack_start(self.stop_button, 0,0,0)
+
+        box.show()
+
+        return box
+    
+    def build_controls(self):
+        frame = gtk.Frame(_("Controls"))
+
+        box = gtk.VBox(False, 2)
+
+        self.progbar = gtk.ProgressBar()
+        self.progbar.show()
+
+        self.status = gtk.Label("")
+        self.status.show()
+
+        box.pack_start(self.progbar, 0,0,0)
+        box.pack_start(self.status, 0,0,0)
+        box.pack_start(self.make_control_buttons(), 0,0,0)
+
+        box.show()
+
+        frame.add(box)
+        frame.show()
+
+        return frame
+
+    def build_gui(self):
+        box = gtk.VBox(False, 2)
+
+        box.pack_start(self.make_info())
+        box.pack_start(self.build_bounds())
+        box.pack_start(self.build_controls())
+
+        box.show()
+
+        return box
+
+    def __init__(self, title=_("Map Download Utility")):
+        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+
+        self.set_title(title)
+
+        self.vals = {}
+        self.enabled = False        
+        self.thread = None
+        self.completed = False
+
+        self.add(self.build_gui())
+
+if __name__=="__main__":
+    gobject.threads_init()
+
+    def stop(*args):
+        gtk.main_quit()
+
+    w = MapDownloader()
+    w.connect("destroy", stop)
+    w.connect("delete_event", stop)
+
+    w.show()
+
+    gtk.main()

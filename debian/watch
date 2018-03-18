@@ -1,0 +1,2 @@
+version=3
+http://d-rats.danplanet.com/download/v(\d.*)/d-rats-(\d.*)\.tar\.gz

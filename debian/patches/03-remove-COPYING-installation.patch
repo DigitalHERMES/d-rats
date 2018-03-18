@@ -1,0 +1,16 @@
+Description: Don't install the COPYING file with the man pages
+Author: Steve Conklin <steve@conklinhouse.com>
+Last-Update: 2011-02-18
+
+Index: d-rats-0.3.3a1dfsg/setup.py
+===================================================================
+--- d-rats-0.3.3a1dfsg.orig/setup.py	2010-08-28 21:37:38.230075850 -0500
++++ d-rats-0.3.3a1dfsg/setup.py	2010-08-28 21:37:28.980976704 -0500
+@@ -94,7 +94,6 @@
+                     ('/usr/share/d-rats/images', image_files),
+                     ('/usr/share/d-rats/ui', ui_files),
+                     ('/usr/share/man/man1', man_files),
+-                    ('/usr/share/doc/d-rats', ['COPYING']),
+                     ] + locale_files)
+                     
+ if sys.platform == "darwin":
