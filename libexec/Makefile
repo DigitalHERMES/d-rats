@@ -7,3 +7,6 @@ lzhuf:
 install: lzhuf
 	mkdir -p /usr/share/d-rats/libexec/
 	install lzhuf /usr/share/d-rats/libexec/
+
+clean:
+	rm -f lzhuf
