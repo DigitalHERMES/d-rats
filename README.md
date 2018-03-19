@@ -9,14 +9,26 @@
    Position tracking and mapping.
 
 
-## Installation instructions:
+## Installation instructions
 
-Use the Debian Linux standard packaging tools, or run as root, according to
-your system:
+Use the Debian Linux standard packaging tools, or run, according to
+your system (from inside d-rats root source directory):
 
+$ cd libexec
+$ make
+$ make install
+$ cd ..
 $ python setup.py install --prefix=/usr/ --install-lib=/usr/lib/python2.7/dist-packages/
 
-Original Author: Dan Smith (KK7DS).
+## Support
+
+D-RATS email list: https://groups.yahoo.com/neo/groups/d-rats_group/info
+
+## Original Author
+
+Dan Smith (KK7DS)
+
+## Maintainer
 
 Rafael Diniz (PU2UIT)
-rafael (AT) riseup (DOT) net
+rafael (at) rhizomatica (dot) org
