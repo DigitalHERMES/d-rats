@@ -1,0 +1,13 @@
+# TODO
+
+D-Rats is being removed from main Linux distributions because
+of pygtk (unmaintaned) dependency.
+
+More information:
+
+https://tracker.debian.org/pkg/d-rats
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=885270
+
+https://wiki.gnome.org/Projects/GObjectIntrospection
+https://wiki.gnome.org/Projects/PyGObject
+https://wiki.gnome.org/Projects/PyGObject/PyGTKCompat
