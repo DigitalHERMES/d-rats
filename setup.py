@@ -78,13 +78,13 @@ def default_build():
     man_files = []
     for f in _man_files:
         os.system("gzip -c %s > %s" % (f, f+".gz"))
-	man_files.append(f+".gz")
+        man_files.append(f+".gz")
 
     locale_files = []
     for f in _locale_files:
         locale_files.append(("/usr/share/d-rats/%s" % os.path.dirname(f), [f]))
 
-    print "LOC: %s" % str(ui_files)
+    print ("LOC: %s" % str(ui_files))
 
     setup(
         name="d-rats",
