@@ -14,11 +14,11 @@
 Use the Debian Linux standard packaging tools, or run, according to
 your system (from inside d-rats root source directory):
 
-$ cd libexec
-$ make
-$ make install
-$ cd ..
-$ python setup.py install --prefix=/usr/ --install-lib=/usr/lib/python2.7/dist-packages/
+     $ cd libexec
+     $ make
+     $ make install
+     $ cd ..
+     $ python setup.py install --prefix=/usr/ --install-lib=/usr/lib/python2.7/dist-packages/
 
 ## Support
 
