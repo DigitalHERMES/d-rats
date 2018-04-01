@@ -8,7 +8,7 @@ Standards-Version: 3.9.6
 Homepage: http://www.d-rats.com/
 
 Package: d-rats
-Architecture: all
+Architecture: amd64
 Depends: ${misc:Depends}, ${python:Depends}, python-libxslt1, python-gtk2, python-libxml2, python-serial
 Description: Communications tool for D-STAR amateur radio
  D-RATS is a communications tool for D-STAR amateur radio low-speed data

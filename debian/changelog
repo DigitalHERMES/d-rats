@@ -1,3 +1,9 @@
+d-rats (0.3.3-5) unstable; urgency=low
+
+  * Repackaged with lzhuf.
+
+ -- Rafael Diniz <rafael@rhizomatica.org>  Sun, 01 Apr 2018 14:26:00 -0300
+
 d-rats (0.3.3-4) unstable; urgency=medium
 
   * Add debian/watch file thanks to irl (Closes: #781605)
