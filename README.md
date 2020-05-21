@@ -32,3 +32,6 @@ Dan Smith (KK7DS)
 
 Rafael Diniz (PU2UIT)
 rafael (at) rhizomatica (dot) org
+
+ps: This is outdated. Please use Maurizio's version at:
+https://github.com/maurizioandreotti/D-Rats
